@@ -26,7 +26,7 @@ jobs:
     - name: Disply Username
       run: echo "Murtadoc"
 
-  build:
+  deploy:
     needs: build-test
     runs-on: ubuntu-latest
     steps:
@@ -35,3 +35,24 @@ jobs:
         with:
           service-id: ${{ secrets.MY_RENDER_SERVICE_ID }}
           api-key: ${{ secrets.MY_RENDER_API_KEY }}
+
+
+
+  run-ui-tests:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the repo
+      uses: actions/checkout@v3
+    - name: Use Node.js18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+        cache: 'npm'
+    - name: install project dependencies
+      run: npm install
+    - name: install Playwright
+      run: npx playwright install 
+    - name: run UI tests for the application
+      run: npm run test:ui
+      
